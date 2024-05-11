@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProductsModule } from './products/products.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -15,8 +17,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       password: process.env.POSTGRES_PASSWORD,
       autoLoadEntities: true,
       // synchronize (prod -> false) | (dev -> true)
-      synchronize: false
-    })
+      synchronize: true
+    }),
+    ProductsModule,
+    CommonModule
   ]
 })
 export class AppModule {}
