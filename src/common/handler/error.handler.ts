@@ -2,7 +2,8 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
-  Logger
+  Logger,
+  NotFoundException
 } from '@nestjs/common';
 
 @Injectable()
@@ -15,6 +16,9 @@ export default class ErrorHandler {
 
     if (error.code === '23505')
       throw new BadRequestException(`Duplicated keys: ${error.detail}`);
+
+    if (error.status == 404)
+      throw new NotFoundException(error.response.message);
 
     throw new InternalServerErrorException();
   }
