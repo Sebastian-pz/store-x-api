@@ -12,7 +12,7 @@ export class Product {
   })
   title: string;
 
-  @Column('numeric', {
+  @Column('float', {
     nullable: false,
     default: 0.0
   })
