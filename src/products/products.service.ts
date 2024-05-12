@@ -58,8 +58,8 @@ export class ProductsService {
 
         product = await queryBuilder
           .where(`title =:title or slug =:slug`, {
-            title: term,
-            slug: term
+            title: term.toLowerCase(),
+            slug: term.toLowerCase()
           })
           .getOne();
       }
