@@ -53,4 +53,9 @@ export class Product {
       .replaceAll(' ', '_')
       .replaceAll("'", '');
   }
+
+  @BeforeInsert()
+  normalizeTitle() {
+    this.title = this.title.toLowerCase();
+  }
 }
