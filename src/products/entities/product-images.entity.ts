@@ -4,7 +4,7 @@ import { Product } from './product.entity';
 @Entity()
 export class ProductImage {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id?: string;
 
   @Column()
   url: string;
@@ -15,5 +15,5 @@ export class ProductImage {
   @ManyToOne(() => Product, (product) => product.images, {
     onDelete: 'CASCADE'
   })
-  product: Product;
+  product?: Product;
 }
