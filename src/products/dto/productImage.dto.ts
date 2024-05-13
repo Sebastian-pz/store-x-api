@@ -2,7 +2,7 @@ import { IsString } from 'class-validator';
 
 export class ProductImageDto {
   @IsString()
-  title: string;
+  alt: string;
 
   @IsString() // or @IsUrl()
   url: string;

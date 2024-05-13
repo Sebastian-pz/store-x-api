@@ -28,7 +28,7 @@ export class ProductsService {
 
       const instancedImages = images.map((image) => {
         return this.productImageRepository.create({
-          title: image.title,
+          alt: image.alt,
           url: image.url
         });
       });
@@ -75,13 +75,15 @@ export class ProductsService {
         // product = await this.productRepository.findOneBy({ slug: term });
 
         // Creating a query builder -> Prevents SQL injections
-        const queryBuilder = this.productRepository.createQueryBuilder();
+        const queryBuilder =
+          this.productRepository.createQueryBuilder('product');
 
         product = await queryBuilder
-          .where(`title =:title or slug =:slug`, {
+          .where(`title=:title or slug=:slug`, {
             title: term.toLowerCase(),
             slug: term.toLowerCase()
           })
+          .leftJoinAndSelect('product.images', 'productImages')
           .getOne();
       }
 
@@ -89,6 +91,7 @@ export class ProductsService {
 
       return product;
     } catch (error) {
+      console.log(error);
       this.errorHandler.handle('Product/Service - findOne', error);
     }
   }

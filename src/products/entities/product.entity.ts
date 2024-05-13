@@ -59,7 +59,10 @@ export class Product {
 
   // A product can have many images
   @OneToMany(() => ProductImage, (productImage) => productImage.product, {
-    cascade: true
+    cascade: true,
+    // So that when a FIND is used, the images are automatically loaded
+    // Automatic join
+    eager: true
   })
   images?: ProductImage[];
 

@@ -10,7 +10,7 @@ export class ProductImage {
   url: string;
 
   @Column()
-  title: string;
+  alt: string;
 
   @ManyToOne(() => Product, (product) => product.images)
   product: Product;
