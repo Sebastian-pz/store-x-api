@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import ErrorHandler from 'src/common/handler/error.handler';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
@@ -18,6 +18,8 @@ export class ProductsService {
 
     @InjectRepository(ProductImage)
     private readonly productImageRepository: Repository<ProductImage>,
+
+    private readonly dataSource: DataSource,
 
     private readonly errorHandler: ErrorHandler
   ) {}
@@ -97,18 +99,46 @@ export class ProductsService {
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
+    // Creating a queryRunner
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
+      const { images, ...restProduct } = updateProductDto;
       const product = await this.productRepository.preload({
         id,
-        ...updateProductDto,
-        images: []
+        ...restProduct
       });
 
       if (!product)
         throw new NotFoundException(`Product ${id} not found and updated`);
 
-      return await this.productRepository.save(product);
+      if (images) {
+        // Delete from table ProductImage -> Where productID = product.id
+        await queryRunner.manager.delete(ProductImage, { product: { id } });
+
+        // Creating instances of ProductImage using my productImageRepository
+        product.images = images.map((image) =>
+          this.productImageRepository.create({
+            alt: image.alt,
+            url: image.url
+          })
+        );
+      }
+
+      // Saving changes
+      await queryRunner.manager.save(product);
+      await queryRunner.commitTransaction();
+
+      // !Close queryRunner
+      await queryRunner.release();
+      return this.findOne(id);
     } catch (error) {
+      // If something goes bad queryRunner execute a rollback
+      await queryRunner.rollbackTransaction();
+
+      // !Close queryRunner
+      await queryRunner.release();
       this.errorHandler.handle('Products/Service - update', error);
     }
   }
