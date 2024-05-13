@@ -49,6 +49,12 @@ export class Product {
   })
   gender: string;
 
+  @Column('text', {
+    array: true,
+    default: []
+  })
+  tags: string[];
+
   @BeforeInsert()
   normalizeInsert() {
     if (!this.slug) {
