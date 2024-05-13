@@ -153,4 +153,17 @@ export class ProductsService {
       this.errorHandler.handle('Product/Service - Remove', error);
     }
   }
+
+  async developmentRemoveAllProductos() {
+    const query = this.productRepository.createQueryBuilder('product');
+
+    try {
+      return await query.delete().execute();
+    } catch (error) {
+      this.errorHandler.handle(
+        'Product/Service - [DEV] RemoveAllProducts',
+        error
+      );
+    }
+  }
 }
