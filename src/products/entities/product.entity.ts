@@ -43,6 +43,12 @@ export class Product {
   })
   gender: string;
 
+  @Column('text', {
+    array: true,
+    default: []
+  })
+  tags: string[];
+
   @BeforeInsert()
   updateSlug() {
     if (!this.slug) {
