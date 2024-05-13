@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import ErrorHandler from 'src/common/handler/error.handler';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { validate as isUUID } from 'uuid';
 
 @Injectable()
 export class ProductsService {
@@ -43,13 +44,29 @@ export class ProductsService {
     }
   }
 
-  async findOne(id: string) {
+  async findOne(term: string) {
     try {
-      const productToFind = await this.productRepository.findOneBy({ id });
-      if (!productToFind)
-        throw new NotFoundException(`Product ${id} not found`);
+      let product: Product;
 
-      return productToFind;
+      if (isUUID(term))
+        product = await this.productRepository.findOneBy({ id: term });
+      else {
+        // product = await this.productRepository.findOneBy({ slug: term });
+
+        // Creating a query builder -> Prevents SQL injections
+        const queryBuilder = this.productRepository.createQueryBuilder();
+
+        product = await queryBuilder
+          .where(`title =:title or slug =:slug`, {
+            title: term.toLowerCase(),
+            slug: term.toLowerCase()
+          })
+          .getOne();
+      }
+
+      if (!product) throw new NotFoundException(`Product ${term} not found`);
+
+      return product;
     } catch (error) {
       this.errorHandler.handle('Product/Service - findOne', error);
     }
@@ -57,15 +74,15 @@ export class ProductsService {
 
   async update(id: string, updateProductDto: UpdateProductDto) {
     try {
-      const update = await this.productRepository.update(
-        { id },
-        updateProductDto
-      );
+      const product = await this.productRepository.preload({
+        id,
+        ...updateProductDto
+      });
 
-      if (!update.affected)
+      if (!product)
         throw new NotFoundException(`Product ${id} not found and updated`);
 
-      return { message: 'updated successfully', status: 200 };
+      return await this.productRepository.save(product);
     } catch (error) {
       this.errorHandler.handle('Products/Service - update', error);
     }
