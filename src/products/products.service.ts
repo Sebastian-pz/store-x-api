@@ -53,7 +53,11 @@ export class ProductsService {
     try {
       const products = await this.productRepository.find({
         take: limit,
-        skip: offset
+        skip: offset,
+        // Get info from relations
+        relations: {
+          images: true
+        }
       });
       return products;
     } catch (error) {
