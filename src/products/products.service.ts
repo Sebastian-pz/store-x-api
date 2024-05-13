@@ -3,10 +3,11 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Product } from './entities/product.entity';
+
 import ErrorHandler from 'src/common/handler/error.handler';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid';
+import { Product, ProductImage } from './entities';
 
 @Injectable()
 export class ProductsService {
@@ -14,13 +15,29 @@ export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+
+    @InjectRepository(ProductImage)
+    private readonly productImageRepository: Repository<ProductImage>,
+
     private readonly errorHandler: ErrorHandler
   ) {}
 
   async create(createProductDto: CreateProductDto) {
     try {
+      const { images = [], ...productDetails } = createProductDto;
+
+      const instancedImages = images.map((image) => {
+        return this.productImageRepository.create({
+          title: image.title,
+          url: image.url
+        });
+      });
+
       // Creating instance of product
-      const product = this.productRepository.create(createProductDto);
+      const product = this.productRepository.create({
+        ...productDetails,
+        images: instancedImages
+      });
 
       // Saving product in the database
       await this.productRepository.save(product);
@@ -76,7 +93,8 @@ export class ProductsService {
     try {
       const product = await this.productRepository.preload({
         id,
-        ...updateProductDto
+        ...updateProductDto,
+        images: []
       });
 
       if (!product)
