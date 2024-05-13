@@ -3,8 +3,10 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn
 } from 'typeorm';
+import { ProductImage } from './product-images.entity';
 
 // Representation of the file in the database
 
@@ -54,6 +56,15 @@ export class Product {
     default: []
   })
   tags: string[];
+
+  // A product can have many images
+  @OneToMany(() => ProductImage, (productImage) => productImage.product, {
+    cascade: true,
+    // So that when a FIND is used, the images are automatically loaded
+    // Automatic join
+    eager: true
+  })
+  images?: ProductImage[];
 
   @BeforeInsert()
   normalizeInsert() {

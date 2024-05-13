@@ -5,9 +5,13 @@ import {
   IsNumber,
   IsOptional,
   IsPositive,
-  IsString
+  IsString,
+  ValidateNested
 } from 'class-validator';
 import { GENDERS, SIZES } from './constants/product.constants';
+import { ProductImage } from '../entities';
+import { Type } from 'class-transformer';
+import { ProductImageDto } from './productImage.dto';
 
 // How do I want the body data of the petition to get to me?
 export class CreateProductDto {
@@ -42,4 +46,10 @@ export class CreateProductDto {
   @IsArray()
   @IsString({ each: true })
   tags: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductImageDto)
+  images?: ProductImage[];
 }
