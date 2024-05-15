@@ -1,6 +1,7 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto, CreateUserDto, UpdateUserDto } from './dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -14,5 +15,14 @@ export class AuthController {
   @Post('login')
   login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
+  }
+
+  @Get('private')
+  @UseGuards(AuthGuard()) // -> require to be authenticated
+  testingAuthorization() {
+    return {
+      ok: true,
+      message: 'you have access'
+    };
   }
 }
