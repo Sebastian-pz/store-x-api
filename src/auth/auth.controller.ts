@@ -31,7 +31,7 @@ export class AuthController {
 
   @Get('private/users')
   @UseGuards(AuthGuard())
-  getUsers(@GetUser() user: User) {
+  getUsers(@GetUser('isActive') user: User) {
     return [user];
   }
 }
