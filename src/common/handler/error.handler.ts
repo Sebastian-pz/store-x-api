@@ -3,7 +3,8 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
-  NotFoundException
+  NotFoundException,
+  UnauthorizedException
 } from '@nestjs/common';
 
 @Injectable()
@@ -19,6 +20,12 @@ export default class ErrorHandler {
 
     if (error.status == 404)
       throw new NotFoundException(error.response.message);
+
+    if (error.status == 400)
+      throw new BadRequestException(error.response.message);
+
+    if (error.status == 401)
+      throw new UnauthorizedException(error.response.message);
 
     throw new InternalServerErrorException();
   }
