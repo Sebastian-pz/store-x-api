@@ -1,4 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn
+} from 'typeorm';
 import USER_ROLES from '../constants/roles';
 
 @Entity({ name: 'users' })
@@ -27,4 +33,18 @@ export class User {
     default: [USER_ROLES.client]
   })
   roles: string[];
+
+  // "Triggers"
+
+  @BeforeInsert()
+  normalizeInsert() {
+    this.email = this.email.toLowerCase();
+    this.fullName = this.fullName.trim().toLowerCase();
+  }
+
+  @BeforeUpdate()
+  normalizeUpdate() {
+    this.email = this.email.toLowerCase();
+    this.fullName = this.fullName.trim().toLowerCase();
+  }
 }
