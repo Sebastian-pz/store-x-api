@@ -12,11 +12,6 @@ export const GetUser = createParamDecorator(
     if (!user)
       throw new InternalServerErrorException('[Server] user not found');
 
-    if (typeof data !== 'string')
-      throw new InternalServerErrorException(
-        `[Server] Invalid requirement, expected string and received ${typeof data}}`
-      );
-
     switch (data) {
       case 'roles':
         return { roles: user.roles };
