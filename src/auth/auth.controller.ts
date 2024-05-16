@@ -1,10 +1,18 @@
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  UseGuards,
+  Headers
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto, CreateUserDto, UpdateUserDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './entities/user.entity';
 
-import { GetUser, GetRawHeaders } from './decorators';
+import { GetUser } from './decorators';
+import { IncomingHttpHeaders } from 'http';
 
 @Controller('auth')
 export class AuthController {
@@ -31,8 +39,7 @@ export class AuthController {
 
   @Get('private/users')
   @UseGuards(AuthGuard())
-  getUsers(@GetUser() user: User, @GetRawHeaders() rawHeaders: string[]) {
-    console.log(rawHeaders);
-    return [user];
+  getUsers(@GetUser() user: User, @Headers() headers: IncomingHttpHeaders) {
+    return [user, headers];
   }
 }
