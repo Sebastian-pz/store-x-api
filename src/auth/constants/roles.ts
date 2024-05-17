@@ -3,4 +3,9 @@ const USER_ROLES = {
   client: 'CLIENT'
 };
 
+export enum VALID_ROLES {
+  ADMIN,
+  CLIENT
+}
+
 export default USER_ROLES;

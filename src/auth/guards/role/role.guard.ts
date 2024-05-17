@@ -7,6 +7,7 @@ import {
   Injectable
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
+import { META_ROLES } from 'src/auth/decorators/role-protection/role-protection.decorator';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -16,7 +17,7 @@ export class RoleGuard implements CanActivate {
     context: ExecutionContext
   ): boolean | Promise<boolean> | Observable<boolean> {
     const validRoles: string[] = this.reflector.get(
-      'roles',
+      META_ROLES,
       context.getHandler()
     );
 
@@ -29,9 +30,9 @@ export class RoleGuard implements CanActivate {
 
     if (!user) throw new BadRequestException('Error getting user');
 
-    const isValid = this.validateRoles(user.roles, validRoles);
-    if (!isValid) throw new ForbiddenException('User has no permissions');
-    return true;
+    const isAuthorized = this.validateRoles(user.roles, validRoles);
+    if (!isAuthorized) throw new ForbiddenException('User has no permissions');
+    return isAuthorized;
   }
 
   validateRoles(userRoles: string[], requiredRoles: string[]) {
