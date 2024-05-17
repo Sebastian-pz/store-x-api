@@ -37,7 +37,7 @@ export class User {
   roles: string[];
 
   // Relations with products
-  @OneToMany(() => Product, (product) => product.user)
+  @OneToMany(() => Product, (product) => product.user, { cascade: true })
   product: Product;
 
   // "Triggers"

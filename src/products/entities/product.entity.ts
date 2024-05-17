@@ -60,7 +60,7 @@ export class Product {
   tags: string[];
 
   // Relations with users
-  @ManyToOne(() => User, (user) => user.product, { eager: true })
+  @ManyToOne(() => User, (user) => user.product, { onDelete: 'CASCADE' })
   user: User;
 
   // A product can have many images
