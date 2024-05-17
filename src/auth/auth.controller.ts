@@ -11,10 +11,8 @@ import { LoginDto, CreateUserDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './entities/user.entity';
 
-import { GetUser } from './decorators';
+import { Auth, GetUser, RoleGuard, RoleProtection } from './decorators';
 import { IncomingHttpHeaders } from 'http';
-import { RoleGuard } from './guards/role/role.guard';
-import { RoleProtection } from './decorators/role-protection/role-protection.decorator';
 import USER_ROLES from './constants/roles';
 
 @Controller('auth')
@@ -54,6 +52,15 @@ export class AuthController {
     return {
       user,
       message: "You're in admin route"
+    };
+  }
+
+  // Best way to create a authorization controller -> Compose decorator
+  @Get('private/compose-decorator')
+  @Auth(USER_ROLES.admin)
+  getComposeDecoratorRoute() {
+    return {
+      message: "You'r in compose decorator route"
     };
   }
 }
