@@ -8,6 +8,7 @@ import ErrorHandler from 'src/common/handler/error.handler';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid';
 import { Product, ProductImage } from './entities';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
@@ -24,7 +25,7 @@ export class ProductsService {
     private readonly errorHandler: ErrorHandler
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, user: User) {
     try {
       const { images = [], ...productDetails } = createProductDto;
 
@@ -38,7 +39,8 @@ export class ProductsService {
       // Creating instance of product
       const product = this.productRepository.create({
         ...productDetails,
-        images: instancedImages
+        images: instancedImages,
+        user
       });
 
       // Saving product in the database
@@ -98,7 +100,7 @@ export class ProductsService {
     }
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(id: string, updateProductDto: UpdateProductDto, user: User) {
     // Creating a queryRunner
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -126,6 +128,7 @@ export class ProductsService {
         );
       }
 
+      product.user = user;
       // Saving changes
       await queryRunner.manager.save(product);
       await queryRunner.commitTransaction();

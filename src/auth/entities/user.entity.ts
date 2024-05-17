@@ -3,9 +3,11 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn
 } from 'typeorm';
 import USER_ROLES from '../constants/roles';
+import { Product } from 'src/products/entities';
 
 @Entity({ name: 'users' })
 export class User {
@@ -33,6 +35,10 @@ export class User {
     default: [USER_ROLES.client]
   })
   roles: string[];
+
+  // Relations with products
+  @OneToMany(() => Product, (product) => product.user)
+  product: Product;
 
   // "Triggers"
 
