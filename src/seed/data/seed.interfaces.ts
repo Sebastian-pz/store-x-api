@@ -14,3 +14,10 @@ export interface Image {
   url: string;
   alt: string;
 }
+
+export interface SeedUser {
+  email: string;
+  fullName: string;
+  password: string;
+  roles: string[];
+}

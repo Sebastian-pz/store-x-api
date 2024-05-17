@@ -1,6 +1,6 @@
 import { SeedProducts } from './seed.interfaces';
 
-const seedData: SeedProducts[] = [
+export const productsSeed: SeedProducts[] = [
   {
     title: 'Stylish Bomber Jacket',
     price: 49.99,
@@ -282,5 +282,3 @@ const seedData: SeedProducts[] = [
     ]
   }
 ];
-
-export default seedData;
