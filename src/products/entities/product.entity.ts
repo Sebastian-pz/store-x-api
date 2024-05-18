@@ -3,10 +3,12 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn
 } from 'typeorm';
 import { ProductImage } from './product-images.entity';
+import { User } from 'src/auth/entities/user.entity';
 
 // Representation of the file in the database
 
@@ -56,6 +58,10 @@ export class Product {
     default: []
   })
   tags: string[];
+
+  // Relations with users
+  @ManyToOne(() => User, (user) => user.product, { onDelete: 'CASCADE' })
+  user: User;
 
   // A product can have many images
   @OneToMany(() => ProductImage, (productImage) => productImage.product, {

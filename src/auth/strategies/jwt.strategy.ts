@@ -21,10 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: JwtPayload): Promise<User> {
     const { id } = payload;
 
-    const user = await this.userRepository.findOne({
-      where: { id },
-      select: { roles: true, isActive: true }
-    });
+    const user = await this.userRepository.findOneBy({ id });
 
     if (!user) throw new UnauthorizedException('Invalid credentials');
     if (!user.isActive) throw new UnauthorizedException('Invalid credentials');
