@@ -29,6 +29,14 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
+  @Get('check-auth-status')
+  @Auth()
+  checkAuthStatus(@GetUser() user: User) {
+    return this.authService.checkAuthStatus(user);
+  }
+
+  // -----------------| Authentication and authorization check routes |-----------------
+
   @Get('private')
   @UseGuards(AuthGuard()) // -> require to be authenticated
   testingAuthorization() {
