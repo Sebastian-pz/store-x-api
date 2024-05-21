@@ -14,5 +14,6 @@ This project is the API of the STORE-X store, this repository is being used for 
 2. Install al dependencies using `npm i`.
 3. Create your .env file, it must have `POSTGRES_PASSWORD` and `POSTGRES_NAME=store-x-dev` (by default).
 4. Set up your database PostgreSQL using Docker: `npm run docker:database`.
-5. You can load mock data using seed request `http://localhost:3000/api/seed`
-6. Enjoy coding.
+5. Check documentation in `http://localhost:3000/api`
+6. You can load mock data using seed request `http://localhost:3000/api/seed`
+7. Enjoy coding.
