@@ -18,7 +18,6 @@ async function bootstrap() {
     .setTitle('Store X API')
     .setDescription('Here you can view all api routes')
     .setVersion('1.0')
-    .addTag('cats')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
