@@ -9,6 +9,8 @@ import {
 } from 'typeorm';
 import { ProductImage } from './product-images.entity';
 import { User } from 'src/auth/entities/user.entity';
+import { ApiProperty } from '@nestjs/swagger';
+import { GENDERS, SIZES } from '../dto/constants/product.constants';
 
 // Representation of the file in the database
 
@@ -17,42 +19,58 @@ export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @ApiProperty()
   @Column('text', {
     unique: true
   })
   title: string;
 
+  @ApiProperty({
+    default: 0.0
+  })
   @Column('float', {
     nullable: false,
     default: 0.0
   })
   price: number;
 
+  @ApiProperty({ nullable: true })
   @Column('text', {
     nullable: true
   })
   description: string;
 
+  @ApiProperty()
   @Column('text', {
     unique: true
   })
   slug: string;
 
+  @ApiProperty({ default: 0 })
   @Column('int', {
     default: 0
   })
   stock: number;
 
+  @ApiProperty({
+    example: SIZES,
+    enum: SIZES
+  })
   @Column('text', {
     array: true
   })
   sizes: string[];
 
+  @ApiProperty({
+    enum: GENDERS,
+    example: GENDERS[0]
+  })
   @Column('text', {
     nullable: false
   })
   gender: string;
 
+  @ApiProperty()
   @Column('text', {
     array: true,
     default: []
