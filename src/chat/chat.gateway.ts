@@ -15,9 +15,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly chatService: ChatService) {}
 
   handleConnection(client: Socket, ...args: any[]) {
-    // console.log(`Client connected ${client.id}`);
+    // Getting custom info from connection -> Client.handshake.{}
+    const { authentication } = client.handshake.headers;
+    console.log(authentication);
+
     this.chatService.connectClient(client);
-    // console.log(this.chatService.getOnlineChats());
 
     this.wss.emit('clients-online', this.chatService.getOnlineIds());
   }
