@@ -7,19 +7,31 @@ import {
 } from '@nestjs/websockets';
 import { ChatService } from './chat.service';
 import { Server, Socket } from 'socket.io';
+import { JwtService } from '@nestjs/jwt';
+import JwtPayload from 'src/auth/interfaces/jwt-payload.interface';
 
 @WebSocketGateway({ cors: true })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Server;
 
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly jwtService: JwtService
+  ) {}
 
   handleConnection(client: Socket, ...args: any[]) {
     // Getting custom info from connection -> Client.handshake.{}
-    const { authentication } = client.handshake.headers;
-    console.log(authentication);
+    const token = client.handshake.headers.authentication as string;
+    let payload: JwtPayload;
 
-    this.chatService.connectClient(client);
+    try {
+      payload = this.jwtService.verify(token);
+    } catch (error) {
+      client.disconnect();
+      console.log({ error });
+    }
+
+    this.chatService.connectClient(client, payload.id);
 
     this.wss.emit('clients-online', this.chatService.getOnlineIds());
   }

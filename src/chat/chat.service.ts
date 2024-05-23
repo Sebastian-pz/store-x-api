@@ -1,5 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Socket } from 'socket.io';
+import { User } from 'src/auth/entities/user.entity';
+import { Repository } from 'typeorm';
 
 interface ConnectedClients {
   [id: string]: Socket;
@@ -15,8 +22,22 @@ export class ChatService {
   private connectedClients: ConnectedClients = {};
   private messages: Message[] = [];
 
-  connectClient(client: Socket) {
-    this.connectedClients[client.id] = client;
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>
+  ) {}
+
+  async connectClient(client: Socket, userId: string) {
+    try {
+      const user = await this.userRepository.findOneBy({ id: userId });
+      if (!user) throw new UnauthorizedException('Invalid request');
+      if (!user.isActive) throw new UnauthorizedException('Invalid request');
+
+      this.connectedClients[user.fullName] = client;
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException('Something went wrong');
+    }
   }
 
   disconnectClient(client: Socket) {
