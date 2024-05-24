@@ -6,8 +6,6 @@
 
 This project is the API of the STORE-X store, this repository is being used for educational purposes only and has no direct relationship with the application that is in production. Similarly, it should be clarified that STORE-X gave its approval to display this content without any problem for educational purposes
 
-<p style="font-size:12px">Store-x is not a real name</p>
-
 ## How to run this project
 
 1. Clone this repository.
@@ -17,3 +15,8 @@ This project is the API of the STORE-X store, this repository is being used for 
 5. Check documentation in `http://localhost:3000/api`
 6. You can load mock data using seed request `http://localhost:3000/api/seed`
 7. Enjoy coding.
+
+
+## Important Note
+This repository contains an adaptation of a backend project originally developed for a company. It is intended for academic purposes only. All sensitive information and real company data have been modified or removed to protect their confidentiality.
+Any commercial use or use other than for study and learning is strictly prohibited.
